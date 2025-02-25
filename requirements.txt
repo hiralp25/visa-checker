@@ -1,5 +1,5 @@
+opencv-python-headless
+numpy
 twilio
 requests
-opencv-python
-numpy
 pillow
