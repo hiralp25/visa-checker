@@ -37,6 +37,16 @@ def fetch_latest_screenshot():
             print(f"❌ API Error: {response.status_code} - {response.text}")
             return None
 
+        # **DEBUG: Print API Response Headers & Type**
+        print(f"🔍 Debug: Response Headers: {response.headers}")
+        print(f"🔍 Debug: Response Content-Type: {response.headers.get('Content-Type')}")
+
+        # Check if response is an image
+        content_type = response.headers.get("Content-Type", "")
+        if "image" not in content_type:
+            print(f"⚠️ API did not return an image. Response: {response.text}")
+            return None
+
         try:
             image_data = response.content  # Get raw image bytes
             return Image.open(BytesIO(image_data))  # Convert to PIL image
@@ -74,7 +84,6 @@ while True:
     if new_screenshot:
         print("✅ API responded successfully")
 
-        # Fix: Use non-global last_screenshot properly
         if last_screenshot is not None and images_are_different(last_screenshot, new_screenshot):
             print("🎉 Visa slot detected! Sending SMS alert...")
             send_sms_alert()
