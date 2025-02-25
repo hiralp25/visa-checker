@@ -11,11 +11,11 @@ from PIL import Image
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
-USER_PHONE_NUMBER = os.getenv("USER_PHONE_NUMBER") 
+USER_PHONE_NUMBER = os.getenv("USER_PHONE_NUMBER")  # Your phone number
 
 # Visa Slot API Details
 API_URL = "https://checkvisaslots.com/pro.html#api_key_info"
-API_KEY = os.getenv("VISA_API_KEY")
+API_KEY = os.getenv("VISA_API_KEY")  # Store in Railway as VISA_API_KEY
 
 # Store last seen screenshots (to compare changes)
 last_screenshot = None
@@ -74,8 +74,8 @@ while True:
     if new_screenshot:
         print("✅ API responded successfully")
 
-        global last_screenshot
-        if last_screenshot and images_are_different(last_screenshot, new_screenshot):
+        # Fix: Use non-global last_screenshot properly
+        if last_screenshot is not None and images_are_different(last_screenshot, new_screenshot):
             print("🎉 Visa slot detected! Sending SMS alert...")
             send_sms_alert()
         else:
