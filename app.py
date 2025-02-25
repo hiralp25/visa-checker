@@ -13,17 +13,30 @@ TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
 TWILIO_PHONE_NUMBER = os.environ.get("TWILIO_PHONE_NUMBER")
 YOUR_PHONE_NUMBER = os.environ.get("YOUR_PHONE_NUMBER")
 
-# URL of the CheckVisaSlots page (this may need to be updated if API changes)
-CHECK_VISA_SLOTS_URL = "https://checkvisaslots.com/pro.html#api_key_info"
+# Visa Slot API Access Key
+ACCESS_KEY = "N8724G"
+
+# CheckVisaSlots URL (modified to include API access)
+CHECK_VISA_SLOTS_URL = f"https://checkvisaslots.com/api/snapshots?key={ACCESS_KEY}"
 
 # Initialize Twilio Client
 twilio_client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
 
 def fetch_latest_screenshot():
-    """Fetch the latest screenshots from CheckVisaSlots."""
-    response = requests.get(CHECK_VISA_SLOTS_URL)
+    """Fetch the latest screenshot for Mumbai VAC from CheckVisaSlots API."""
+    headers = {"Authorization": f"Bearer {ACCESS_KEY}"}
+    response = requests.get(CHECK_VISA_SLOTS_URL, headers=headers)
+    
     if response.status_code == 200:
-        return response.content  # Returning raw image data
+        data = response.json()
+        # Extract the latest Mumbai VAC screenshot URL
+        mumbai_vac_images = [
+            snap["image_url"] for snap in data.get("snapshots", []) 
+            if "Mumbai VAC" in snap["location"]
+        ]
+        
+        if mumbai_vac_images:
+            return requests.get(mumbai_vac_images[-1]).content  # Get latest image
     return None
 
 def compare_images(img1_bytes, img2_bytes):
@@ -49,7 +62,7 @@ def send_sms_alert():
         from_=TWILIO_PHONE_NUMBER,
         to=YOUR_PHONE_NUMBER
     )
-    print("SMS sent: ", message.sid)
+    print("📩 SMS sent:", message.sid)
 
 # Store the last fetched image
 last_mumbai_vac_image = None
