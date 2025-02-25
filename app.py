@@ -1,3 +1,4 @@
+import os
 import time
 import requests
 import cv2
@@ -6,15 +7,15 @@ from twilio.rest import Client
 from io import BytesIO
 from PIL import Image
 
-# Twilio Credentials (Replace with your values)
-TWILIO_ACCOUNT_SID = "AC1075101e90c0e633ee4173f664261a3c"
-TWILIO_AUTH_TOKEN = "c51acc6faf6c6b142038c7201b3265a1"
-TWILIO_PHONE_NUMBER = "+14342150755"
-USER_PHONE_NUMBER = "8828572658"  # Replace with your actual phone number
+# Fetch credentials from Railway environment variables
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
+USER_PHONE_NUMBER = os.getenv("USER_PHONE_NUMBER") 
 
 # Visa Slot API Details
 API_URL = "https://checkvisaslots.com/pro.html#api_key_info"
-API_KEY = "N8724G"
+API_KEY = os.getenv("VISA_API_KEY")
 
 # Store last seen screenshots (to compare changes)
 last_screenshot = None
